@@ -1,0 +1,29 @@
+{
+  "FLUID_PRESSURE_AND_FLOW": {
+    "title": "Давление и поток жидкости",
+    "underPressureScreenTitle": "Под давлением",
+    "flowScreenTitle": "Поток жидкости",
+    "waterTowerScreenTitle": "Водонапорная башня",
+    "flow": {
+      "flowRate": "Скорость потока",
+      "pressure": "Давление",
+      "velocity": "Скорость",
+      "density": "Плотность",
+      "pipeDiameter": "Диаметр трубы",
+      "pipeLength": "Длина трубы",
+      "reset": "Сбросить",
+      "play": "Запустить",
+      "pause": "Пауза",
+      "flowMeter": "Измеритель потока",
+      "pressureGauge": "Манометр",
+      "velocityMeter": "Измеритель скорости",
+      "particles": "Частицы",
+      "showParticles": "Показать частицы",
+      "hideParticles": "Скрыть частицы",
+      "pipeControls": "Управление трубой",
+      "addControlPoint": "Добавить точку управления",
+      "removeControlPoint": "Удалить точку управления",
+      "instructions": "Перетащите точки управления для изменения формы трубы"
+    }
+  }
+} 
