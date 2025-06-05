@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Galf Design - Симуляция потока жидкости</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,11 +18,26 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
         }
         .title {
-            text-align: center;
+            text-align: left;
             color: #333;
-            margin-bottom: 20px;
+            margin: 0 0 0 70px;
+            padding: 0;
+            font-size: 24px;
+            line-height: 1;
+            display: inline-block;
+            vertical-align: middle;
+            font-family: 'Inter', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+        }
+        .logo {
+            position: relative;
+            display: inline-block;
+            width: 120px;
+            height: 60px;
+            object-fit: contain;
+            vertical-align: middle;
         }
         .controls {
             display: grid;
@@ -172,7 +188,7 @@
             width: 100%;
             height: 200px;
             background: transparent;
-            border: 2px solid #2196F3;
+            border: none;
             border-radius: 5px;
             position: relative;
             overflow: hidden;
@@ -362,11 +378,155 @@
             pointer-events: none;
             z-index: 4;
         }
+        .bottom-sliders-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: stretch;
+            gap: 18px;
+            margin-bottom: 10px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        .bottom-sliders-row .slider-container {
+            min-width: 150px;
+            flex: 1 1 150px;
+            max-width: 180px;
+        }
+        @media (max-width: 950px) {
+            .bottom-sliders-row {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .bottom-sliders-row .slider-container {
+                min-width: 130px;
+                max-width: 100%;
+            }
+        }
+        .bottom-sliders-row .slider-container input[type="range"] {
+            width: 100%;
+            min-width: 80px;
+        }
+        .bottom-sliders-row .slider-container input[type="number"] {
+            width: 50px;
+            min-width: 40px;
+            font-size: 14px;
+            padding: 3px 4px;
+        }
+        /* Toggle switch styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { display: none; }
+        .slider.round {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #bdbdbd;
+            border-radius: 24px;
+            transition: background 0.2s;
+        }
+        .slider.round:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 4px #0002;
+        }
+        .switch input:checked + .slider.round {
+            background-color: #1976d2;
+        }
+        .switch input:checked + .slider.round:before {
+            transform: translateX(20px);
+        }
+        .nasos-overlay {
+            position: absolute;
+            z-index: 1000;
+            pointer-events: none;
+            user-select: none;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .nasos-overlay img {
+            display: block;
+            max-width: 60px;
+            max-height: 60px;
+        }
+        /* Вращение насоса */
+        .nasos-rotating {
+            transition: transform 0.1s linear;
+        }
+        .header-container {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            height: 60px;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .header-buttons button {
+            padding: 7px 16px;
+            font-size: 14px;
+            border-radius: 7px;
+            min-width: 0;
+            height: 32px;
+        }
+        .telegram-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: none;
+            transition: background 0.2s;
+            margin-right: 2px;
+        }
+        .telegram-link:hover {
+            background: #e3f2fd;
+        }
+        .telegram-link svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Galf Design - Симуляция потока жидкости</h1>
+        <div class="header-container">
+            <div class="header-left">
+                <img src="images/logo.png" alt="Logo" class="logo">
+                <h1 class="title">Симуляция потока жидкости</h1>
+            </div>
+            <div class="header-buttons">
+                <a class="telegram-link" href="https://t.me/galfdesign" target="_blank" title="Telegram Galf Design">
+                    <svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="120" cy="120" r="120" fill="#37AEE2"/>
+                        <path d="M53 123.5l131.5-54.5c6.5-2.5 13 1.5 10.5 11.5l-22.5 106c-1.5 7-6 8.5-12 5.5l-33-24.5-15.5 15c-1.5 1.5-2.5 2.5-5 2.5l2-28 51-46c2-2 0-3-3-1l-63 40-27-8.5c-7-2-7-7-1.5-9.5z" fill="#fff"/>
+                    </svg>
+                </a>
+                <button class="play-button" id="playButton">Запустить</button>
+                <button class="add-manometer-button" id="addManometerButton">Добавить манометр</button>
+            </div>
+        </div>
         
         <div class="simulation-area" id="simulationArea">
             <div class="pipe" id="pipe">
@@ -374,13 +534,31 @@
             </div>
             <div class="pipe constriction" id="pipeConstrictionTop"></div>
             <div class="pipe constriction" id="pipeConstrictionBottom"></div>
-            <div class="manometers-layer" id="manometersLayer"></div>
+            <div class="manometers-layer" id="manometersLayer">
+                <div id="nasosOverlay" class="nasos-overlay">
+                    <img src="images/nasos.png" alt="Насос" draggable="false">
+                </div>
+                <canvas id="rulerCanvas" width="870" height="80" style="position: absolute; left: 50%; transform: translateX(-50%); bottom: -30px; z-index: 20; width: 870px;"></canvas>
+            </div>
         </div>
 
         <div class="controls">
             <div class="slider-container">
-                <label class="slider-label">Расход</label>
-                <input type="range" id="flowRate" min="0.1" max="10" step="0.01" value="1.00">
+                <label class="slider-label" style="display: flex; align-items: center; gap: 12px;">
+                    Расход
+                    <span style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
+                        <span id="unitM3hLabel" style="font-size: 13px;">м³/ч</span>
+                        <label class="switch">
+                            <input type="checkbox" id="flowUnitToggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span id="unitLpmLabel" style="font-size: 13px;">л/мин</span>
+                    </span>
+                </label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="flowRate" min="0.02" max="5" step="0.01" value="1.00">
+                    <input type="number" id="flowRateInput" min="0.02" max="5" step="0.01" value="1.00" style="width: 70px; font-size: 15px; padding: 4px 6px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
                 <div class="slider-value">
                     <span id="flowRateValue">1.00</span>
                     <span id="flowRateValueLpm" style="color: #666; font-size: 90%;">(16.67 л/мин)</span>
@@ -388,19 +566,15 @@
             </div>
             <div class="slider-container">
                 <label class="slider-label">Напор</label>
-                <input type="range" id="pressure" min="0" max="10" step="0.1" value="4.0">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="pressure" min="0" max="10" step="0.1" value="4.0">
+                    <input type="number" id="pressureInput" min="0" max="10" step="0.1" value="4.0" style="width: 70px; font-size: 15px; padding: 4px 6px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
                 <div class="slider-value">
                     <span id="pressureValue">4.0</span>
                     <span>м в. ст.</span>
                 </div>
             </div>
-        </div>
-
-        <div class="button-container">
-            <button class="play-button" id="playButton">Запустить</button>
-            <button class="pause-button" id="pauseButton">Пауза</button>
-            <button class="reset-button" id="resetButton">Сбросить</button>
-            <button class="add-manometer-button" id="addManometerButton">Добавить манометр</button>
         </div>
 
         <div class="info-panel" id="infoPanel">
@@ -413,10 +587,10 @@
                 <div class="value" id="infoVelocity"></div>
             </div>
             <div class="info-card">
-                <div class="label">Диаметр трубы</div>
+                <div class="label">Вн. диаметр трубы</div>
                 <div class="value" id="infoDiameter"></div>
             </div>
-            <div class="info-card">
+            <div class="info-card" style="display:none;">
                 <div class="label">Длина трубы</div>
                 <div class="value" id="infoLength"></div>
             </div>
@@ -425,23 +599,33 @@
                 <div class="value" id="infoResistance"></div>
             </div>
             <div class="info-card" id="maxFlowCard">
-                <div class="label">Максимально допустимый расход</div>
+                <div class="label">Максимально возможный расход</div>
                 <div class="value" id="infoMaxFlow"></div>
+            </div>
+            <div class="info-card" id="reynoldsCard">
+                <div class="label">Режим течения / Число Рейнольдса</div>
+                <div class="value" id="infoReynolds"></div>
             </div>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
+        <div class="bottom-sliders-row">
             <div class="slider-container">
-                <label class="slider-label">Диаметр трубы</label>
-                <input type="range" id="pipeHeight" min="10" max="50" value="22">
+                <label class="slider-label">Вн. диаметр трубы</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="pipeHeight" min="10" max="50" value="20">
+                    <input type="number" id="pipeHeightInput" min="10" max="50" value="20" style="width: 50px; font-size: 14px; padding: 3px 4px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
                 <div class="slider-value">
-                    <span id="pipeHeightValue">22</span>
+                    <span id="pipeHeightValue">20</span>
                     <span>мм</span>
                 </div>
             </div>
             <div class="slider-container">
                 <label class="slider-label">Длина трубы</label>
-                <input type="range" id="pipeLength" min="10" max="100" value="40">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="pipeLength" min="10" max="100" value="40">
+                    <input type="number" id="pipeLengthInput" min="10" max="100" value="40" style="width: 50px; font-size: 14px; padding: 3px 4px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
                 <div class="slider-value">
                     <span id="pipeLengthValue">40.00</span>
                     <span>м</span>
@@ -449,15 +633,21 @@
             </div>
             <div class="slider-container">
                 <label class="slider-label">Диаметр сужения</label>
-                <input type="range" id="constrictionHeight" min="1" max="50" value="25">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="constrictionHeight" min="1" max="50" value="50">
+                    <input type="number" id="constrictionHeightInput" min="1" max="50" value="50" style="width: 50px; font-size: 14px; padding: 3px 4px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
                 <div class="slider-value">
-                    <span id="constrictionHeightValue">25</span>
+                    <span id="constrictionHeightValue">50</span>
                     <span>мм</span>
                 </div>
             </div>
             <div class="slider-container">
                 <label class="slider-label">Длина сужения</label>
-                <input type="range" id="constrictionLength" min="20" max="500" value="20">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="constrictionLength" min="20" max="500" value="20">
+                    <input type="number" id="constrictionLengthInput" min="20" max="500" value="20" style="width: 50px; font-size: 14px; padding: 3px 4px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
                 <div class="slider-value">
                     <span id="constrictionLengthValue">20</span>
                     <span>мм</span>
@@ -479,10 +669,11 @@
                 this.draggedManometer = null;
                 this.dragOffset = { x: 0, y: 0 };
                 this.lastTime = 0;
-                this.pipeHeight = 22; // мм
+                this.pipeHeight = 20; // мм по умолчанию
                 this.pipeLength = 40; // м (по умолчанию)
-                this.constrictionHeight = 25; // по умолчанию как у трубы
+                this.constrictionHeight = 50; // по умолчанию 50 мм
                 this.constrictionLength = 0.02; // 20 мм по умолчанию
+                this.flowUnit = 'm3h'; // 'm3h' или 'lpm'
 
                 this.simulationArea = document.getElementById('simulationArea');
                 this.pipeElem = document.getElementById('pipe');
@@ -490,15 +681,14 @@
                 this.pipeConstrictionBottom = document.getElementById('pipeConstrictionBottom');
                 this.manometersLayer = document.getElementById('manometersLayer');
                 this.initializeControls();
-                this.createParticles();
+                // Таймер для генерации частиц
+                this.particleInterval = null;
             }
 
             initializeControls() {
                 const flowRateSlider = document.getElementById('flowRate');
                 const pressureSlider = document.getElementById('pressure');
                 const playButton = document.getElementById('playButton');
-                const pauseButton = document.getElementById('pauseButton');
-                const resetButton = document.getElementById('resetButton');
                 const addManometerButton = document.getElementById('addManometerButton');
                 const pipeHeightSlider = document.getElementById('pipeHeight');
                 const pipeHeightValue = document.getElementById('pipeHeightValue');
@@ -517,32 +707,116 @@
                 const constrictionLengthSlider = document.getElementById('constrictionLength');
                 const constrictionLengthValue = document.getElementById('constrictionLengthValue');
 
-                flowRateSlider.addEventListener('input', (e) => {
-                    this.flowRate = parseFloat(e.target.value);
-                    flowRateValue.textContent = this.flowRate.toFixed(2);
-                    flowRateValueLpm.textContent = `(${(this.flowRate * 1000 / 60).toFixed(2)} л/мин)`;
+                const flowRateInput = document.getElementById('flowRateInput');
+                const flowUnitToggle = document.getElementById('flowUnitToggle');
+                const updateFlowUnitUI = () => {
+                    document.getElementById('unitM3hLabel').style.color = this.flowUnit === 'm3h' ? '#1976d2' : '#888';
+                    document.getElementById('unitLpmLabel').style.color = this.flowUnit === 'lpm' ? '#1976d2' : '#888';
+                };
+
+                const setFlowSliderMinMax = (unit) => {
+                    if (unit === 'm3h') {
+                        flowRateSlider.min = 0.02;
+                        flowRateSlider.max = 5;
+                        flowRateSlider.step = 0.01;
+                        flowRateInput.min = 0.02;
+                        flowRateInput.max = 5;
+                        flowRateInput.step = 0.01;
+                    } else {
+                        flowRateSlider.min = (0.02 * 1000 / 60).toFixed(2); // ~0.33 л/мин
+                        flowRateSlider.max = 83.3;
+                        flowRateSlider.step = 0.1;
+                        flowRateInput.min = (0.02 * 1000 / 60).toFixed(2);
+                        flowRateInput.max = 83.3;
+                        flowRateInput.step = 0.1;
+                    }
+                };
+
+                flowUnitToggle.addEventListener('change', (e) => {
+                    // Переключение единиц
+                    const prevUnit = this.flowUnit;
+                    this.flowUnit = flowUnitToggle.checked ? 'lpm' : 'm3h';
+                    // Пересчёт значения расхода в новые единицы
+                    let value = parseFloat(flowRateSlider.value);
+                    if (prevUnit === 'm3h' && this.flowUnit === 'lpm') {
+                        value = value * 1000 / 60;
+                    } else if (prevUnit === 'lpm' && this.flowUnit === 'm3h') {
+                        value = value * 60 / 1000;
+                    }
+                    setFlowSliderMinMax(this.flowUnit);
+                    value = Math.max(parseFloat(flowRateSlider.min), Math.min(parseFloat(flowRateSlider.max), value));
+                    this.flowRate = value;
+                    flowRateSlider.value = value;
+                    flowRateInput.value = value;
+                    // Обновить отображение
+                    if (this.flowUnit === 'm3h') {
+                        flowRateValue.textContent = this.flowRate.toFixed(2);
+                        flowRateValueLpm.textContent = `(${(this.flowRate * 1000 / 60).toFixed(2)} л/мин)`;
+                    } else {
+                        flowRateValue.textContent = this.flowRate.toFixed(2);
+                        flowRateValueLpm.textContent = `(${this.flowRate.toFixed(2)} л/мин)`;
+                    }
+                    updateFlowUnitUI();
                     this.updateInfoPanel();
                 });
+                updateFlowUnitUI();
+                setFlowSliderMinMax(this.flowUnit);
 
+                const pressureInput = document.getElementById('pressureInput');
                 pressureSlider.addEventListener('input', (e) => {
                     this.pressure = parseFloat(e.target.value);
+                    pressureInput.value = this.pressure;
+                    pressureValue.textContent = this.pressure.toFixed(1);
+                });
+                pressureInput.addEventListener('input', (e) => {
+                    let val = parseFloat(e.target.value);
+                    if (isNaN(val)) val = pressureSlider.min;
+                    val = Math.max(parseFloat(pressureSlider.min), Math.min(parseFloat(pressureSlider.max), val));
+                    pressureSlider.value = val;
+                    this.pressure = val;
                     pressureValue.textContent = this.pressure.toFixed(1);
                 });
 
+                const pipeHeightInput = document.getElementById('pipeHeightInput');
                 pipeHeightSlider.addEventListener('input', (e) => {
                     const prevPipeHeight = this.pipeHeight;
                     const prevConstrictionHeight = this.constrictionHeight;
                     this.pipeHeight = parseInt(e.target.value); // в мм
+                    pipeHeightInput.value = this.pipeHeight;
                     pipeHeightValue.textContent = this.pipeHeight;
-                    // Если диаметр сужения был равен диаметру трубы до изменения, синхронизируем в обе стороны
                     if (prevConstrictionHeight === prevPipeHeight) {
                         this.constrictionHeight = this.pipeHeight;
                         constrictionHeightSlider.value = this.pipeHeight;
+                        constrictionHeightInput.value = this.pipeHeight;
                         constrictionHeightValue.textContent = this.pipeHeight;
                     } else if (this.constrictionHeight > this.pipeHeight) {
-                        // Если диаметр сужения больше нового диаметра трубы — корректируем
                         this.constrictionHeight = this.pipeHeight;
                         constrictionHeightSlider.value = this.pipeHeight;
+                        constrictionHeightInput.value = this.pipeHeight;
+                        constrictionHeightValue.textContent = this.pipeHeight;
+                    }
+                    this.updatePipe();
+                    this.resetParticlesY();
+                    this.updateInfoPanel();
+                });
+                pipeHeightInput.addEventListener('input', (e) => {
+                    let val = parseInt(e.target.value);
+                    if (isNaN(val)) val = pipeHeightSlider.min;
+                    val = Math.max(parseInt(pipeHeightSlider.min), Math.min(parseInt(pipeHeightSlider.max), val));
+                    pipeHeightSlider.value = val;
+                    const prevPipeHeight = this.pipeHeight;
+                    const prevConstrictionHeight = this.constrictionHeight;
+                    this.pipeHeight = val;
+                    pipeHeightValue.textContent = this.pipeHeight;
+                    if (prevConstrictionHeight === prevPipeHeight) {
+                        this.constrictionHeight = this.pipeHeight;
+                        constrictionHeightSlider.value = this.pipeHeight;
+                        constrictionHeightInput.value = this.pipeHeight;
+                        constrictionHeightValue.textContent = this.pipeHeight;
+                    } else if (this.constrictionHeight > this.pipeHeight) {
+                        this.constrictionHeight = this.pipeHeight;
+                        constrictionHeightSlider.value = this.pipeHeight;
+                        constrictionHeightInput.value = this.pipeHeight;
                         constrictionHeightValue.textContent = this.pipeHeight;
                     }
                     this.updatePipe();
@@ -550,28 +824,60 @@
                     this.updateInfoPanel();
                 });
 
+                const pipeLengthInput = document.getElementById('pipeLengthInput');
                 pipeLengthSlider.addEventListener('input', (e) => {
                     this.pipeLength = parseFloat(e.target.value);
+                    pipeLengthInput.value = this.pipeLength;
+                    pipeLengthValue.textContent = this.pipeLength.toFixed(2);
+                    this.updatePipe();
+                    this.updateInfoPanel();
+                });
+                pipeLengthInput.addEventListener('input', (e) => {
+                    let val = parseFloat(e.target.value);
+                    if (isNaN(val)) val = pipeLengthSlider.min;
+                    val = Math.max(parseFloat(pipeLengthSlider.min), Math.min(parseFloat(pipeLengthSlider.max), val));
+                    pipeLengthSlider.value = val;
+                    this.pipeLength = val;
                     pipeLengthValue.textContent = this.pipeLength.toFixed(2);
                     this.updatePipe();
                     this.updateInfoPanel();
                 });
 
+                const constrictionHeightInput = document.getElementById('constrictionHeightInput');
                 constrictionHeightSlider.addEventListener('input', (e) => {
                     this.constrictionHeight = parseInt(e.target.value);
+                    constrictionHeightInput.value = this.constrictionHeight;
+                    constrictionHeightValue.textContent = this.constrictionHeight;
+                    this.updatePipe();
+                });
+                constrictionHeightInput.addEventListener('input', (e) => {
+                    let val = parseInt(e.target.value);
+                    if (isNaN(val)) val = constrictionHeightSlider.min;
+                    val = Math.max(parseInt(constrictionHeightSlider.min), Math.min(parseInt(constrictionHeightSlider.max), val));
+                    constrictionHeightSlider.value = val;
+                    this.constrictionHeight = val;
                     constrictionHeightValue.textContent = this.constrictionHeight;
                     this.updatePipe();
                 });
 
+                const constrictionLengthInput = document.getElementById('constrictionLengthInput');
                 constrictionLengthSlider.addEventListener('input', (e) => {
                     this.constrictionLength = parseFloat(e.target.value) / 1000; // мм -> м
+                    constrictionLengthInput.value = e.target.value;
                     constrictionLengthValue.textContent = e.target.value;
+                    this.updatePipe();
+                });
+                constrictionLengthInput.addEventListener('input', (e) => {
+                    let val = parseFloat(e.target.value);
+                    if (isNaN(val)) val = constrictionLengthSlider.min;
+                    val = Math.max(parseFloat(constrictionLengthSlider.min), Math.min(parseFloat(constrictionLengthSlider.max), val));
+                    constrictionLengthSlider.value = val;
+                    this.constrictionLength = val / 1000;
+                    constrictionLengthValue.textContent = val;
                     this.updatePipe();
                 });
 
                 playButton.addEventListener('click', () => this.start());
-                pauseButton.addEventListener('click', () => this.pause());
-                resetButton.addEventListener('click', () => this.reset());
                 addManometerButton.addEventListener('click', () => this.addManometer());
 
                 this.simulationArea.addEventListener('mousedown', (e) => this.handleMouseDown(e));
@@ -595,35 +901,65 @@
                 } else {
                     this.infoMaxFlow = null;
                 }
+
+                // Обработчики для расхода (flowRate)
+                flowRateSlider.addEventListener('input', (e) => {
+                    this.flowRate = parseFloat(e.target.value);
+                    flowRateInput.value = this.flowRate;
+                    if (this.flowUnit === 'm3h') {
+                        flowRateValue.textContent = this.flowRate.toFixed(2);
+                        flowRateValueLpm.textContent = `(${(this.flowRate * 1000 / 60).toFixed(2)} л/мин)`;
+                    } else {
+                        flowRateValue.textContent = this.flowRate.toFixed(2);
+                        flowRateValueLpm.textContent = `(${this.flowRate.toFixed(2)} л/мин)`;
+                    }
+                    this.updateInfoPanel();
+                });
+                flowRateInput.addEventListener('input', (e) => {
+                    let val = parseFloat(e.target.value);
+                    if (isNaN(val)) val = flowRateSlider.min;
+                    val = Math.max(parseFloat(flowRateSlider.min), Math.min(parseFloat(flowRateSlider.max), val));
+                    flowRateSlider.value = val;
+                    this.flowRate = val;
+                    if (this.flowUnit === 'm3h') {
+                        flowRateValue.textContent = this.flowRate.toFixed(2);
+                        flowRateValueLpm.textContent = `(${(this.flowRate * 1000 / 60).toFixed(2)} л/мин)`;
+                    } else {
+                        flowRateValue.textContent = this.flowRate.toFixed(2);
+                        flowRateValueLpm.textContent = `(${(this.flowRate * 60 / 1000).toFixed(2)} м³/ч)`;
+                    }
+                    this.updateInfoPanel();
+                });
             }
 
-            createParticles() {
-                const numParticles = 50;
+            // Генерация одной частицы
+            createParticle() {
                 const particlesContainer = document.getElementById('particlesContainer');
                 const pipeRect = this.pipeElem.getBoundingClientRect();
                 const areaRect = this.simulationArea.getBoundingClientRect();
                 const pipeLeft = pipeRect.left - areaRect.left;
-                const pipeTop = pipeRect.top - areaRect.top;
                 const pipeWidth = this.pipeElem.offsetWidth;
                 const pipeHeight = this.pipeElem.offsetHeight;
                 const border = 2;
                 const particleSize = 8;
-                for (let i = 0; i < numParticles; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particlesContainer.appendChild(particle);
-                    const x = border + Math.random() * (pipeWidth - 2 * border - particleSize);
-                    const y = border + Math.random() * (pipeHeight - 4 - 2 * border - particleSize); // -4px для top/bottom
-                    this.particles.push({
-                        element: particle,
-                        x: x,
-                        y: y,
-                        speed: Math.random() * 2 + 1
-                    });
-                }
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particlesContainer.appendChild(particle);
+                const x = border;
+                const y = border + Math.random() * (pipeHeight - 2 * border - particleSize);
+                const speed = Math.random() * 2 + 2; // минимальная скорость увеличена
+                const vy = speed * (Math.random() - 0.5) * 0.6;
+                this.particles.push({
+                    element: particle,
+                    x: x,
+                    y: y,
+                    speed: speed,
+                    vy: vy,
+                    lifetime: 0 // для контроля срока жизни
+                });
             }
 
-            addManometer() {
+            addManometer(x = null, y = null) {
                 const manometer = document.createElement('div');
                 manometer.className = 'manometer';
                 
@@ -682,13 +1018,18 @@
                 probe.style.zIndex = '1';
                 manometer.appendChild(probe);
 
-                // Размещаем манометр по центру блока симуляции
+                // Размещаем манометр по координатам или по центру
                 const simWidth = this.simulationArea.offsetWidth;
                 const simHeight = this.simulationArea.offsetHeight;
                 const manWidth = 40;
                 const manHeight = 70;
-                manometer.style.left = `${(simWidth - manWidth) / 2}px`;
-                manometer.style.top = `${(simHeight - manHeight) / 2}px`;
+                if (x !== null && y !== null) {
+                    manometer.style.left = `${x}px`;
+                    manometer.style.top = `${y}px`;
+                } else {
+                    manometer.style.left = `${(simWidth - manWidth) / 2}px`;
+                    manometer.style.top = `${(simHeight - manHeight) / 2}px`;
+                }
 
                 this.manometersLayer.appendChild(manometer);
                 this.manometers.push(manometer);
@@ -752,10 +1093,19 @@
             start() {
                 if (!this.isRunning) {
                     this.isRunning = true;
+                    // Запуск анимации
                     this.animationId = requestAnimationFrame((time) => {
                         this.lastTime = time;
                         this.animate(time);
                     });
+                    // Запуск генерации частиц
+                    if (!this.particleInterval) {
+                        this.particleInterval = setInterval(() => {
+                            if (this.isRunning) {
+                                this.createParticle();
+                            }
+                        }, 120);
+                    }
                 }
             }
 
@@ -764,32 +1114,32 @@
                 if (this.animationId) {
                     cancelAnimationFrame(this.animationId);
                 }
+                if (this.particleInterval) {
+                    clearInterval(this.particleInterval);
+                    this.particleInterval = null;
+                }
             }
 
             reset() {
                 this.pause();
                 this.pressure = 4.0;
                 document.getElementById('pressure').value = 4.0;
-                document.getElementById('pipeHeight').value = 22;
-                document.getElementById('pipeHeightValue').textContent = '22';
-                this.pipeHeight = 22;
+                document.getElementById('pipeHeight').value = 20;
+                document.getElementById('pipeHeightValue').textContent = '20';
+                this.pipeHeight = 20;
                 document.getElementById('pipeLength').value = 40;
                 document.getElementById('pipeLengthValue').textContent = '40.00';
                 this.pipeLength = 40;
                 this.updatePipe();
                 this.updateInfoPanel();
-                const pipeRect = this.pipeElem.getBoundingClientRect();
-                const areaRect = this.simulationArea.getBoundingClientRect();
-                const pipeLeft = pipeRect.left - areaRect.left;
-                const pipeTop = pipeRect.top - areaRect.top;
-                const pipeWidth = this.pipeElem.offsetWidth;
-                const pipeHeight = this.pipeElem.offsetHeight;
-                const border = 2;
-                const particleSize = 8;
+                // Удалить все старые частицы
+                const particlesContainer = document.getElementById('particlesContainer');
                 this.particles.forEach(particle => {
-                    particle.x = pipeLeft + border + Math.random() * (pipeWidth - 2 * border - particleSize);
-                    particle.y = pipeTop + border + Math.random() * (pipeHeight - 2 * border - particleSize);
+                    if (particle.element && particle.element.parentNode) {
+                        particle.element.parentNode.removeChild(particle.element);
+                    }
                 });
+                this.particles = [];
             }
 
             calculatePressure(x, y) {
@@ -907,6 +1257,11 @@
                 }
                 // Базовая скорость частицы
                 const baseSpeed = particle.speed * (velocity / 1.5);
+                // --- Определяем режим течения по Re основной трубы ---
+                const nu = 1.14e-6;
+                const Re = v1 * diameterM1 / nu;
+                const isLaminar = Re < 2300;
+                // ---------------------------------------------------
                 // Получаем максимальный расход для текущих параметров
                 const HMax = this.pressure;
                 const D1Max = this.pipeHeight / 1000;
@@ -1034,23 +1389,53 @@
                     speed = baseSpeedAdj * speedFactor * 3;
                     particle.element.classList.remove('warning');
                 }
+                // Минимальная скорость для движения к выходу (увеличена в 5 раз)
+                if (Math.abs(speed) < 1.5) speed = 1.5 * Math.sign(speed || 1);
+                // Горизонтальное движение
                 particle.x += speed * (deltaTime / 16);
-                const particlesContainer = document.getElementById('particlesContainer');
-                const containerWidth = particlesContainer.offsetWidth;
-                const containerHeight = particlesContainer.offsetHeight;
-                if (particle.x > containerWidth - border - particleSize) {
-                    particle.x = border;
-                    particle.y = border + Math.random() * (containerHeight - 2 * border - particleSize);
-                }
-                if (particle.x < border) particle.x = border;
-                // Границы по вертикали строго по контейнеру
-                const minY = border;
-                const maxY = containerHeight - border - particleSize;
-                if (particle.y < minY) particle.y = minY;
-                if (particle.y > maxY) particle.y = maxY;
-                // Если частица по горизонтали вне контейнера (например, после resize), скорректировать y
-                if (particle.x < 0 || particle.x > containerWidth) {
-                    particle.y = minY + Math.random() * (maxY - minY);
+                if (isLaminar) {
+                    // Ламинарное течение: строго по горизонтали
+                    particle.vy = 0;
+                    const particlesContainer = document.getElementById('particlesContainer');
+                    const containerWidth = particlesContainer.offsetWidth;
+                    const minY = border;
+                    // Центрируем по вертикали
+                    particle.y = (particlesContainer.offsetHeight - particleSize) / 2;
+                    // Если частица по горизонтали вне контейнера (например, после resize)
+                    if (particle.x > containerWidth - border - particleSize) {
+                        particle.x = border;
+                    }
+                    if (particle.x < border) particle.x = border;
+                } else {
+                    // Турбулентное течение: с vy и отскоками
+                    // Если горизонтальная скорость почти нулевая — останавливаем и vy
+                    if (Math.abs(speed) < 0.01) {
+                        particle.vy = 0;
+                    }
+                    // Вертикальное движение с отскоками
+                    const particlesContainer = document.getElementById('particlesContainer');
+                    const containerWidth = particlesContainer.offsetWidth;
+                    const containerHeight = particlesContainer.offsetHeight;
+                    const minY = border;
+                    const maxY = containerHeight - border - particleSize;
+                    particle.y += (particle.vy || 0);
+                    // Отскок от верхней/нижней границы
+                    if (particle.y < minY) {
+                        particle.y = minY;
+                        particle.vy = -(particle.vy || 0);
+                    }
+                    if (particle.y > maxY) {
+                        particle.y = maxY;
+                        particle.vy = -(particle.vy || 0);
+                    }
+                    // Если частица по горизонтали вне контейнера (например, после resize), скорректировать y и vy
+                    if (particle.x > containerWidth - border - particleSize) {
+                        particle.x = border;
+                        particle.y = border + Math.random() * (containerHeight - 2 * border - particleSize);
+                        // vy снова пропорционален speed
+                        particle.vy = particle.speed * (Math.random() - 0.5) * 0.6;
+                    }
+                    if (particle.x < border) particle.x = border;
                 }
                 particle.element.style.left = `${particle.x}px`;
                 particle.element.style.top = `${particle.y}px`;
@@ -1062,8 +1447,22 @@
                 const deltaTime = currentTime - this.lastTime;
                 this.lastTime = currentTime;
 
+                // Обновляем и фильтруем частицы по сроку жизни и положению
+                const particlesContainer = document.getElementById('particlesContainer');
+                const pipeWidth = this.pipeElem.offsetWidth;
+                const border = 2;
+                const particleSize = 8;
                 this.particles.forEach(particle => {
                     this.updateParticle(particle, deltaTime);
+                    particle.lifetime = (particle.lifetime || 0) + 1;
+                });
+                // Срок жизни увеличен ещё в 1.2 раза (теперь 540 кадров)
+                this.particles = this.particles.filter(particle => {
+                    const alive = (particle.x <= pipeWidth - border - particleSize) && (particle.lifetime <= 540);
+                    if (!alive && particle.element && particle.element.parentNode) {
+                        particle.element.parentNode.removeChild(particle.element);
+                    }
+                    return alive;
                 });
 
                 this.manometers.forEach(manometer => {
@@ -1105,14 +1504,12 @@
                     if (insidePipe) {
                         const pressure = this.calculatePressure(x, y);
                         valueElement.textContent = `${(pressure/1000).toFixed(1)} кПа`;
-                        
                         // Высота столбика давления
                         const maxBarHeight = manHeight - 20; // 20px запас для value и remove
                         const barHeight = Math.max(0, Math.min(pressure / 100 * maxBarHeight, maxBarHeight));
-                        
                         // Обновляем стили манометра
                         manometer.style.setProperty('--pressure-height', `${barHeight}px`);
-                        manometer.style.setProperty('--pressure-color', `hsl(${200 - pressure * 2}, 70%, 50%)`);
+                        manometer.style.setProperty('--pressure-color', '#1976d2');
                     } else {
                         valueElement.textContent = '---';
                         manometer.style.setProperty('--pressure-height', '0px');
@@ -1130,18 +1527,37 @@
                 // Визуальная длина трубы всегда фиксированная (например, 80% ширины блока симуляции)
                 const pipePx = Math.round(areaWidth * 0.8);
                 const pipeLeft = Math.max(10, (areaWidth - pipePx) / 2);
-                const pipeHeightPx = this.pipeHeight * 1.5;
+                // Высота трубы зависит от диаметра: 10 мм — 60px, 50 мм — 80px
+                const minPipe = 10;
+                const maxPipe = 50;
+                const minPipePx = 60;
+                const maxPipePx = 80;
+                const pipeHeightPx = Math.round(
+                    ((this.pipeHeight - minPipe) / (maxPipe - minPipe)) * (maxPipePx - minPipePx) + minPipePx
+                );
                 const pipeTop = Math.round((areaHeight - pipeHeightPx) / 2);
                 this.pipeElem.style.left = pipeLeft + 'px';
                 this.pipeElem.style.width = pipePx + 'px';
                 this.pipeElem.style.height = pipeHeightPx + 'px';
                 this.pipeElem.style.top = pipeTop + 'px';
-                // Визуализация сужения
+                // Визуализация сужения (тоже фиксированная высота)
                 if (this.pipeConstrictionTop || this.pipeConstrictionBottom) {
-                    const constrictionFrac = Math.min(1, this.constrictionLength / this.pipeLength);
-                    const constrictionTotalPx = Math.max(10, Math.round(pipePx * constrictionFrac));
-                    const pipeHeightPx = this.pipeHeight * 2;
-                    const constrictionHeightPx = this.constrictionHeight * 2;
+                    // Новая логика: ширина сужения визуально от 0 до 100px
+                    const constrictionLengthSlider = document.getElementById('constrictionLength');
+                    const minConstrictionLength = parseFloat(constrictionLengthSlider.min);
+                    const maxConstrictionLength = parseFloat(constrictionLengthSlider.max);
+                    // Значение слайдера (мм)
+                    const constrictionLengthValue = this.constrictionLength * 1000;
+                    // Линейно от 0 до 100px
+                    const constrictionTotalPx = Math.round(
+                        ((constrictionLengthValue - minConstrictionLength) / (maxConstrictionLength - minConstrictionLength)) * 100
+                    );
+                    // Высота сужения пропорциональна значению constrictionHeight (1-50 мм) и pipeHeightPx
+                    const minConstriction = 1; // min из слайдера
+                    const maxConstriction = 50; // max из слайдера
+                    const constrictionHeightPx = Math.max(6, Math.round(
+                        ((this.constrictionHeight - minConstriction) / (maxConstriction - minConstriction)) * (pipeHeightPx - 10) + 6
+                    ));
                     const areaHeight = this.simulationArea.offsetHeight;
                     const pipeTop = Math.round((areaHeight - pipeHeightPx) / 2);
                     // Высота прямоугольников сверху и снизу
@@ -1156,6 +1572,9 @@
                         this.pipeConstrictionTop.style.top = pipeTop + 'px';
                         this.pipeConstrictionTop.style.clipPath = '';
                         this.pipeConstrictionTop.style.display = rectHeight > 0 ? '' : 'none';
+                        // Прозрачность зависит от соотношения диаметров
+                        this.pipeConstrictionTop.style.opacity = this.constrictionHeight < this.pipeHeight ? '1' : '0';
+                        this.pipeConstrictionTop.style.transition = 'opacity 0.3s ease';
                     }
                     // Нижний блок (прямоугольник)
                     if (this.pipeConstrictionBottom) {
@@ -1165,8 +1584,17 @@
                         this.pipeConstrictionBottom.style.top = (pipeTop + pipeHeightPx - rectHeight) + 'px';
                         this.pipeConstrictionBottom.style.clipPath = '';
                         this.pipeConstrictionBottom.style.display = rectHeight > 0 ? '' : 'none';
+                        // Прозрачность зависит от соотношения диаметров
+                        this.pipeConstrictionBottom.style.opacity = this.constrictionHeight < this.pipeHeight ? '1' : '0';
+                        this.pipeConstrictionBottom.style.transition = 'opacity 0.3s ease';
                     }
+                } else {
+                    // Скрыть оба блока
+                    if (this.pipeConstrictionTop) this.pipeConstrictionTop.style.display = 'none';
+                    if (this.pipeConstrictionBottom) this.pipeConstrictionBottom.style.display = 'none';
                 }
+                // Обновить линейку
+                drawRuler(this.pipeLength);
             }
 
             resetParticlesY() {
@@ -1190,36 +1618,59 @@
                 const area = Math.PI * Math.pow(diameterM / 2, 2);
                 const flowM3s = this.flowRateToM3s(this.flowRate);
                 const velocity = area > 0 ? flowM3s / area : 0; // м/с
-                let flowStr = `${this.flowRate.toFixed(2)} м³/ч (${(this.flowRate * 1000 / 60).toFixed(2)} л/мин)`;
+                let flowStr = this.flowUnit === 'm3h'
+                    ? `${this.flowRate.toFixed(2)} м³/ч (${(this.flowRate * 1000 / 60).toFixed(2)} л/мин)`
+                    : `${(this.flowRate * 60 / 1000).toFixed(2)} м³/ч (${this.flowRate.toFixed(2)} л/мин)`;
                 this.infoPressure.textContent = `${this.pressure.toFixed(1)} м в. ст. (${pressureKPa.toFixed(1)} кПа)`;
                 this.infoVelocity.textContent = `${velocity.toFixed(2)} м/с`;
                 this.infoDiameter.textContent = `${this.pipeHeight} мм (${diameterM.toFixed(3)} м)`;
                 this.infoLength.textContent = `${this.pipeLength.toFixed(2)} м`;
-                // Расчет полного перепада давления на участке (Па)
-                // Повторяем расчет из calculatePressure для x = L
+                // Новый расчёт сопротивления участка с учётом сужения
                 const rho = 1000;
                 const nu = 1.14e-6;
-                const D = diameterM;
+                const D1 = this.pipeHeight / 1000;
+                const D2 = this.constrictionHeight / 1000;
                 const L = this.pipeLength;
-                const v = velocity;
-                const Re = v * D / nu;
-                let lambda;
-                if (Re < 2300) {
-                    lambda = 64 / Re;
-                } else if (Re > 4000) {
-                    lambda = 0.3164 * Math.pow(Re, -0.25);
+                const L2 = this.constrictionLength;
+                const L1 = Math.max(0, (L - L2) / 2);
+                const L3 = Math.max(0, L - L1 - L2);
+                const A1 = Math.PI * Math.pow(D1 / 2, 2);
+                const A2 = Math.PI * Math.pow(D2 / 2, 2);
+                const v1 = A1 > 0 ? flowM3s / A1 : 0;
+                const v2 = A2 > 0 ? flowM3s / A2 : 0;
+                const Re1 = v1 * D1 / nu;
+                const Re2 = v2 * D2 / nu;
+                let lambda1, lambda2;
+                if (Re1 < 2300) {
+                    lambda1 = 64 / Re1;
+                } else if (Re1 > 4000) {
+                    lambda1 = 0.3164 * Math.pow(Re1, -0.25);
                 } else {
                     const lam_lam = 64 / 2300;
                     const lam_turb = 0.3164 * Math.pow(4000, -0.25);
-                    const frac = (Re - 2300) / (4000 - 2300);
-                    lambda = lam_lam + (lam_turb - lam_lam) * frac;
+                    const frac = (Re1 - 2300) / (4000 - 2300);
+                    lambda1 = lam_lam + (lam_turb - lam_lam) * frac;
+                }
+                if (Re2 < 2300) {
+                    lambda2 = 64 / Re2;
+                } else if (Re2 > 4000) {
+                    lambda2 = 0.3164 * Math.pow(Re2, -0.25);
+                } else {
+                    const lam_lam = 64 / 2300;
+                    const lam_turb = 0.3164 * Math.pow(4000, -0.25);
+                    const frac = (Re2 - 2300) / (4000 - 2300);
+                    lambda2 = lam_lam + (lam_turb - lam_lam) * frac;
                 }
                 const zeta_sum = 2;
-                const deltaP_trub = lambda * (L / D) * (rho * v * v / 2);
-                const deltaP_m = zeta_sum * (rho * v * v / 2);
-                const deltaP_total = deltaP_trub + deltaP_m;
-                const resistance_mH2O = deltaP_total / 9806.65;
-                this.infoResistance.textContent = `${resistance_mH2O.toFixed(2)} м в. ст.`;
+                const zeta_in = 0.5;
+                const zeta_out = 0.5;
+                const g = 9.81;
+                const h_trub1 = lambda1 * (L1 / D1) * (v1 * v1) / (2 * g);
+                const h_trub2 = lambda2 * (L2 / D2) * (v2 * v2) / (2 * g);
+                const h_trub3 = lambda1 * (L3 / D1) * (v1 * v1) / (2 * g);
+                const h_locals = zeta_in * (v2 * v2) / (2 * g) + zeta_out * (v1 * v1) / (2 * g) + zeta_sum * (v1 * v1) / (2 * g);
+                const h_total = h_trub1 + h_trub2 + h_trub3 + h_locals;
+                this.infoResistance.textContent = `${h_total.toFixed(2)} м в. ст.`;
                 // Расчет максимального расхода для текущего сужения и напора
                 // Используем численный метод (итерация по Q)
                 function calcMaxFlow({H, D1, D2, L, L2, zeta_sum, zeta_in, zeta_out, nu, rho}) {
@@ -1280,10 +1731,10 @@
                 const nuMax = 1.14e-6;
                 const rhoMax = 1000;
                 const Qmax = calcMaxFlow({H: HMax, D1: D1Max, D2: D2Max, L: LMax, L2: L2Max, zeta_sum: zeta_sumMax, zeta_in: zeta_inMax, zeta_out: zeta_outMax, nu: nuMax, rho: rhoMax});
-                const Qmax_lps = Qmax * 1000;
+                const Qmax_lpm = Qmax * 1000 * 60;
                 const Qmax_m3h = Qmax * 3600;
                 if (this.infoMaxFlow) {
-                    this.infoMaxFlow.textContent = `${Qmax_lps.toFixed(2)} л/с (${Qmax_m3h.toFixed(2)} м³/ч)`;
+                    this.infoMaxFlow.textContent = `${Qmax_lpm.toFixed(2)} л/мин (${Qmax_m3h.toFixed(2)} м³/ч)`;
                     // Добавляем класс warning если текущий расход превышает максимальный
                     const maxFlowCard = document.getElementById('maxFlowCard');
                     if (this.flowRate > Qmax_m3h) {
@@ -1292,16 +1743,166 @@
                         maxFlowCard.classList.remove('warning');
                     }
                 }
+                // Число Рейнольдса и режим
+                const nu_re = 1.14e-6;
+                const Re = velocity * diameterM / nu_re;
+                let regime = 'Ламинарный';
+                if (Re >= 2300) regime = 'Турбулентный';
+                const infoReynolds = document.getElementById('infoReynolds');
+                if (infoReynolds) {
+                    infoReynolds.textContent = `${regime} (Re = ${Re.toFixed(0)})`;
+                }
             }
 
             // Переводит расход из м³/ч в м³/с
             flowRateToM3s(value) {
-                return value / 3600;
+                if (this.flowUnit === 'm3h') {
+                    return value / 3600;
+                } else {
+                    return value / 1000 / 60;
+                }
             }
         }
 
+        // Ruler drawing function
+        function drawRuler(pipeLength) {
+            const canvas = document.getElementById('rulerCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const width = canvas.width;
+            const height = canvas.height;
+            // Убрана отрисовка любого контура/фона, только основная линия и деления
+            // Основная линия линейки
+            const margin = 36;
+            const rulerY = height - 38;
+            const rulerLengthPx = width - 2 * margin;
+            ctx.save();
+            ctx.strokeStyle = '#1976d2';
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(margin, rulerY);
+            ctx.lineTo(margin + rulerLengthPx, rulerY);
+            ctx.stroke();
+            ctx.restore();
+
+            // Деления
+            const maxLen = pipeLength; // м
+            let divisions = 5;
+            let step = maxLen / divisions;
+            if (step > 20) step = 20;
+            else if (step > 10) step = 10;
+            else if (step > 5) step = 5;
+            else if (step > 2) step = 2;
+            else if (step > 1) step = 1;
+            else if (step > 0.5) step = 0.5;
+            else if (step > 0.2) step = 0.2;
+            else step = 0.1;
+            const nTicks = Math.floor(maxLen / step) + 1;
+            ctx.font = '15px Inter, Segoe UI, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            for (let i = 0; i < nTicks; i++) {
+                const x = margin + (i * step / maxLen) * rulerLengthPx;
+                // Основные деления
+                ctx.save();
+                ctx.strokeStyle = '#1976d2';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(x, rulerY);
+                ctx.lineTo(x, rulerY - 22);
+                ctx.stroke();
+                ctx.restore();
+                // Подписи
+                ctx.save();
+                ctx.fillStyle = '#1976d2';
+                ctx.font = 'bold 15px Inter, Segoe UI, Arial, sans-serif';
+                const label = (i * step).toFixed(step < 1 ? 2 : 1) + ' м';
+                ctx.fillText(label, x, rulerY - 38);
+                ctx.restore();
+            }
+            // Мелкие деления
+            ctx.save();
+            ctx.strokeStyle = '#90caf9';
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i <= nTicks-1; i++) {
+                if (i < nTicks-1) {
+                    const x0 = margin + (i * step / maxLen) * rulerLengthPx;
+                    const x1 = margin + ((i+1) * step / maxLen) * rulerLengthPx;
+                    for (let j = 1; j < 5; j++) {
+                        const x = x0 + (x1-x0) * (j/5);
+                        ctx.beginPath();
+                        ctx.moveTo(x, rulerY);
+                        ctx.lineTo(x, rulerY - 10);
+                        ctx.stroke();
+                    }
+                }
+            }
+            ctx.restore();
+        }
+
         window.addEventListener('load', () => {
-            new FlowSimulation();
+            window.flowSimulationInstance = new FlowSimulation();
+            // Добавляем два манометра по краям трубы
+            const sim = window.flowSimulationInstance;
+            // Ждём, пока pipe будет отрисован и получит размеры
+            setTimeout(() => {
+                const simWidth = sim.simulationArea.offsetWidth;
+                const simHeight = sim.simulationArea.offsetHeight;
+                const manWidth = 40;
+                const manHeight = 70;
+                const y = (simHeight - manHeight) / 2 - 30;
+                // Левый манометр: сдвиг от края +90px
+                sim.addManometer(0 + 90, y);
+                // Правый манометр: сдвиг от края -90px
+                sim.addManometer(simWidth - manWidth - 90, y);
+            }, 0);
+            drawRuler(window.flowSimulationInstance.pipeLength);
+        });
+
+        // Позиционируем насос над левым краем трубы
+        window.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('nasosOverlay');
+            const simArea = document.getElementById('simulationArea');
+            const pipe = document.getElementById('pipe');
+            const nasosImg = overlay.querySelector('img');
+            function positionNasos() {
+                // Позиционирование относительно слоя с манометрами
+                const manometersLayer = document.getElementById('manometersLayer');
+                const layerRect = manometersLayer.getBoundingClientRect();
+                overlay.style.left = '20px';
+                overlay.style.top = '50%';
+                overlay.style.transform = 'translateY(-50%)';
+            }
+            positionNasos();
+            window.addEventListener('resize', positionNasos);
+
+            // Вращение насоса
+            let lastTimestamp = null;
+            let angle = 0;
+            function animateNasosRotation(ts) {
+                if (!window.flowSimulationInstance) {
+                    requestAnimationFrame(animateNasosRotation);
+                    return;
+                }
+                const sim = window.flowSimulationInstance;
+                // flowRate всегда в выбранных единицах, переводим в м3/ч
+                let flowRateM3h = sim.flowUnit === 'm3h' ? sim.flowRate : sim.flowRate * 60 / 1000;
+                // Ограничим диапазон для плавности
+                flowRateM3h = Math.max(0, Math.min(flowRateM3h, 5));
+                // 1 об/сек при 5 м3/ч, линейно
+                const maxRps = 1; // оборотов в секунду при 5 м3/ч
+                const rps = flowRateM3h / 5 * maxRps;
+                if (lastTimestamp !== null) {
+                    const dt = (ts - lastTimestamp) / 1000;
+                    angle += 2 * Math.PI * rps * dt;
+                }
+                nasosImg.style.transform = `rotate(${angle}rad)`;
+                lastTimestamp = ts;
+                requestAnimationFrame(animateNasosRotation);
+            }
+            requestAnimationFrame(animateNasosRotation);
         });
     </script>
 </body>
