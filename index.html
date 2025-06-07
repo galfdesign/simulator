@@ -644,6 +644,13 @@
           padding-top: 11px !important;
           padding-bottom: 11px !important;
         }
+        .info-card.warning {
+            background: #ffebee !important; /* светло-красный фон */
+            border: 2px solid #d32f2f !important; /* красная рамка */
+            color: #b71c1c !important; /* насыщенный красный текст */
+            box-shadow: 0 0 8px 2px #ffcdd2;
+            transition: background 0.2s, border 0.2s, color 0.2s;
+        }
     </style>
 </head>
 <body>
@@ -797,7 +804,10 @@
                 <option value="0.06">Чугунная труба</option>
                 <option value="0.3">Бетонная труба</option>
             </select>
-            <input type="range" id="roughnessSlider" min="0" max="2" value="0.1" step="0.1">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="range" id="roughnessSlider" min="0" max="2" value="0.1" step="0.001">
+                <input type="number" id="roughnessInput" min="0" max="2" value="0.1" step="0.001" style="width: 70px; font-size: 15px; padding: 4px 6px; border-radius: 6px; border: 1px solid #ccc;">
+            </div>
                 <div class="slider-value">
                 <span id="roughnessValue">0.1</span> мм
                 </div>
@@ -820,10 +830,10 @@
             </select>
             <div class="slider-value" style="margin-top:8px;">
                 Вязкость: <span id="fluidViscosityValue">—</span> м²/с
+                </div>
             </div>
-        </div>
-        <div class="slider-container">
-            <label class="slider-label">Диаметр сужения</label>
+            <div class="slider-container">
+                <label class="slider-label">Диаметр сужения</label>
             <div style="display: flex; align-items: center; gap: 10px;">
                 <input type="range" id="constrictionHeight" min="1" max="50" value="50">
                 <input type="number" id="constrictionHeightInput" min="1" max="50" value="50" style="width: 50px; font-size: 14px; padding: 3px 4px; border-radius: 6px; border: 1px solid #ccc;">
@@ -1166,6 +1176,26 @@
                     this.updateInfoPanel();
                     this.updateManometers();
                 });
+
+                // После инициализации элементов управления в initializeControls()
+                const pipeTypeSelect = document.getElementById('pipeTypeSelect');
+                const roughnessSlider = document.getElementById('roughnessSlider');
+                const roughnessInput = document.getElementById('roughnessInput');
+                const roughnessValue = document.getElementById('roughnessValue');
+                if (pipeTypeSelect && roughnessSlider && roughnessInput && roughnessValue) {
+                    pipeTypeSelect.addEventListener('change', (e) => {
+                        const val = parseFloat(e.target.value);
+                        if (!isNaN(val)) {
+                            roughnessSlider.value = val;
+                            roughnessInput.value = val;
+                            roughnessValue.textContent = val.toFixed(3);
+                            if (window.flowSimulationInstance) {
+                                window.flowSimulationInstance.updateInfoPanel();
+                                window.flowSimulationInstance.updateManometers();
+                            }
+                        }
+                    });
+                }
             }
 
             // Генерация одной частицы
@@ -1391,12 +1421,21 @@
                 const fluidType = document.getElementById('fluidTypeSelect').value;
                 const nu = getNuByFluidAndTemperature(fluidType, tempC);
                 // Основные параметры
-                const D1 = this.pipeHeight / 1000; // диаметр до и после сужения, м
-                const D2 = this.constrictionHeight / 1000; // диаметр сужения, м
-                const L = this.pipeLength; // общая длина трубы, м
-                const L2 = Math.min(this.constrictionLength, L); // длина сужения, м
-                const L1 = Math.max(0, (L - L2) / 2); // длина до сужения
-                const L3 = Math.max(0, L - L1 - L2); // длина после сужения
+                let D1 = this.pipeHeight / 1000;
+                let D2 = this.constrictionHeight / 1000;
+                let L = this.pipeLength;
+                let L2 = this.constrictionLength;
+                let L1, L3;
+                if (D2 >= D1) {
+                    // Нет сужения
+                    L1 = 0;
+                    L2 = 0;
+                    L3 = L;
+                    D2 = D1; // чтобы не было деления на 0
+                } else {
+                    L1 = Math.max(0, (L - L2) / 2);
+                    L3 = Math.max(0, L - L1 - L2);
+                }
                 // Площадь сечения
                 const A1 = Math.PI * Math.pow(D1 / 2, 2);
                 const A2 = Math.PI * Math.pow(D2 / 2, 2);
@@ -1409,11 +1448,11 @@
                 const Re1 = v1 * D1 / nu;
                 const Re2 = v2 * D2 / nu;
                 // λ для каждого участка (с учетом шероховатости)
-                const lambda1 = calcLambdaColebrook(Re1, D1, epsilon);
-                const lambda2 = calcLambdaColebrook(Re2, D2, epsilon);
+                const lambda1 = calcLambdaColebrook(Re1, D1, epsilon / D1);
+                const lambda2 = calcLambdaColebrook(Re2, D2, epsilon / D2);
                 // Местные сопротивления на входе и выходе из сужения (резкое сужение/расширение)
-                const zeta_in = 0.5; // на входе в сужение
-                const zeta_out = 0.5; // на выходе из сужения
+                const zeta_in = 0; // на входе в сужение
+                const zeta_out = 0; // на выходе из сужения
                 // x — позиция точки измерения (px), пересчитаем в метры относительно начала трубы
                 const pipeRect = this.pipeElem.getBoundingClientRect();
                 const simRect = this.simulationArea.getBoundingClientRect();
@@ -1447,7 +1486,7 @@
                     deltaP += lambda1 * ((xMeters - L1 - L2) / D1) * (rho * v1 * v1 / 2);
                 }
                 // Местные потери вне сужения (например, фитинги) — фиксированное значение
-                const zeta_sum = 2;
+                const zeta_sum = 0;
                 deltaP += zeta_sum * (xMeters / L) * (rho * v1 * v1 / 2);
                 // Давление на входе (напор в м в. ст. -> Па)
                 const basePressure = this.pressure * 1000 * 9.81;
@@ -1493,24 +1532,34 @@
                 const D2Max = this.constrictionHeight / 1000;
                 const LMax = this.pipeLength;
                 const L2Max = this.constrictionLength;
-                const zeta_sumMax = 2;
-                const zeta_inMax = 0.5;
-                const zeta_outMax = 0.5;
+                const zeta_sumMax = 0;
+                const zeta_inMax = 0;
+                const zeta_outMax = 0;
                 const nuMax = 1.14e-6;
                 const rhoMax = 1000;
                 function calcMaxFlow({H, D1, D2, L, L2, zeta_sum, zeta_in, zeta_out, nu, rho}) {
                     const g = 9.81;
-                    const L1 = Math.max(0, (L - L2) / 2);
-                    const L3 = Math.max(0, L - L1 - L2);
+                    let _D2 = D2;
+                    let _L1, _L2, _L3;
+                    if (D2 >= D1) {
+                        _L1 = 0;
+                        _L2 = 0;
+                        _L3 = L;
+                        _D2 = D1;
+                    } else {
+                        _L2 = Math.min(L2, L);
+                        _L1 = Math.max(0, (L - _L2) / 2);
+                        _L3 = Math.max(0, L - _L1 - _L2);
+                    }
                     const A1 = Math.PI * Math.pow(D1 / 2, 2);
-                    const A2 = Math.PI * Math.pow(D2 / 2, 2);
+                    const A2 = Math.PI * Math.pow(_D2 / 2, 2);
                     let Q = 0.00001;
                     let Qmax = 0;
                     for (let i = 0; i < 1000; i++) {
                         const v1 = A1 > 0 ? Q / A1 : 0.00001;
                         const v2 = A2 > 0 ? Q / A2 : 0.00001;
                         const Re1 = v1 * D1 / nu;
-                        const Re2 = v2 * D2 / nu;
+                        const Re2 = v2 * _D2 / nu;
                         let lambda1, lambda2;
                         if (Re1 < 2300) {
                             lambda1 = 64 / Re1;
@@ -1532,9 +1581,9 @@
                             const frac = (Re2 - 2300) / (4000 - 2300);
                             lambda2 = lam_lam + (lam_turb - lam_lam) * frac;
                         }
-                        const h_trub1 = lambda1 * (L1 / D1) * (v1 * v1) / (2 * g);
-                        const h_trub2 = lambda2 * (L2 / D2) * (v2 * v2) / (2 * g);
-                        const h_trub3 = lambda1 * (L3 / D1) * (v1 * v1) / (2 * g);
+                        const h_trub1 = lambda1 * (_L1 / D1) * (v1 * v1) / (2 * g);
+                        const h_trub2 = lambda2 * (_L2 / _D2) * (v2 * v2) / (2 * g);
+                        const h_trub3 = lambda1 * (_L3 / D1) * (v1 * v1) / (2 * g);
                         const h_locals = zeta_in * (v2 * v2) / (2 * g) + zeta_out * (v1 * v1) / (2 * g) + zeta_sum * (v1 * v1) / (2 * g);
                         const h_total = h_trub1 + h_trub2 + h_trub3 + h_locals;
                         if (h_total > H) break;
@@ -1581,9 +1630,9 @@
                     const frac = (Re2Cur - 2300) / (4000 - 2300);
                     lambda2Cur = lam_lam + (lam_turb - lam_lam) * frac;
                 }
-                const zeta_sum = 2;
-                const zeta_in = 0.5;
-                const zeta_out = 0.5;
+                const zeta_sum = 0;
+                const zeta_in = 0;
+                const zeta_out = 0;
                 const h_trub1 = lambda1Cur * (L1Cur / D1Cur) * (v1Cur * v1Cur) / (2 * g);
                 const h_trub2 = lambda2Cur * (L2Cur / D2Cur) * (v2Cur * v2Cur) / (2 * g);
                 const h_trub3 = lambda1Cur * (L3Cur / D1Cur) * (v1Cur * v1Cur) / (2 * g);
@@ -1851,7 +1900,6 @@
                 this.infoDiameter.textContent = `${this.pipeHeight} мм (${diameterM.toFixed(3)} м)`;
                 this.infoLength.textContent = `${this.pipeLength.toFixed(2)} м`;
                 // Новый расчёт сопротивления участка с учётом сужения, температуры и шероховатости
-                const rho = 1000;
                 const tempC = parseFloat(document.getElementById('temperatureSlider').value);
                 const fluidType = document.getElementById('fluidTypeSelect').value;
                 const epsilon = parseFloat(document.getElementById('roughnessSlider').value) / 1000;
@@ -1860,26 +1908,36 @@
                 const D2 = this.constrictionHeight / 1000;
                 const L = this.pipeLength;
                 const L2 = this.constrictionLength;
-                const L1 = Math.max(0, (L - L2) / 2);
-                const L3 = Math.max(0, L - L1 - L2);
+                let _D2 = D2, _L1, _L2, _L3;
+                if (D2 >= D1) {
+                    _L1 = 0;
+                    _L2 = 0;
+                    _L3 = L;
+                    _D2 = D1;
+                } else {
+                    _L2 = Math.min(L2, L);
+                    _L1 = Math.max(0, (L - _L2) / 2);
+                    _L3 = Math.max(0, L - _L1 - _L2);
+                }
                 const A1 = Math.PI * Math.pow(D1 / 2, 2);
-                const A2 = Math.PI * Math.pow(D2 / 2, 2);
+                const A2 = Math.PI * Math.pow(_D2 / 2, 2);
                 const v1 = A1 > 0 ? flowM3s / A1 : 0;
                 const v2 = A2 > 0 ? flowM3s / A2 : 0;
                 const Re1 = v1 * D1 / nu;
-                const Re2 = v2 * D2 / nu;
-                const lambda1 = calcLambdaColebrook(Re1, D1, epsilon);
-                const lambda2 = calcLambdaColebrook(Re2, D2, epsilon);
-                const zeta_sum = 2;
-                const zeta_in = 0.5;
-                const zeta_out = 0.5;
+                const Re2 = v2 * _D2 / nu;
+                const lambda1 = calcLambdaColebrook(Re1, D1, epsilon / D1);
+                const lambda2 = calcLambdaColebrook(Re2, _D2, epsilon / _D2);
+                const zeta_sum = 0;
+                const zeta_in = 0;
+                const zeta_out = 0;
                 const g = 9.81;
-                const h_trub1 = lambda1 * (L1 / D1) * (v1 * v1) / (2 * g);
-                const h_trub2 = lambda2 * (L2 / D2) * (v2 * v2) / (2 * g);
-                const h_trub3 = lambda1 * (L3 / D1) * (v1 * v1) / (2 * g);
+                const rho = (tempC === 70) ? 977.8 : 1000;
+                const h_trub1 = lambda1 * (_L1 / D1) * (v1 * v1) / (2 * g);
+                const h_trub2 = lambda2 * (_L2 / _D2) * (v2 * v2) / (2 * g);
+                const h_trub3 = lambda1 * (_L3 / D1) * (v1 * v1) / (2 * g);
                 const h_locals = zeta_in * (v2 * v2) / (2 * g) + zeta_out * (v1 * v1) / (2 * g) + zeta_sum * (v1 * v1) / (2 * g);
                 const h_total = h_trub1 + h_trub2 + h_trub3 + h_locals;
-                this.infoResistance.textContent = `${h_total.toFixed(2)} м в. ст.`;
+                this.infoResistance.textContent = `${h_total.toFixed(2)} м в. ст. (${(h_total * 9.81).toFixed(1)} кПа)`;
                 // --- Новый расчёт максимального расхода и числа Рейнольдса с учётом температуры и шероховатости ---
                 function calcMaxFlowColebrook({H, D1, D2, L, L2, zeta_sum, zeta_in, zeta_out, nu, rho, epsilon}) {
                     const g = 9.81;
@@ -1894,8 +1952,8 @@
                         const v2 = A2 > 0 ? Q / A2 : 0.00001;
                         const Re1 = v1 * D1 / nu;
                         const Re2 = v2 * D2 / nu;
-                        const lambda1 = calcLambdaColebrook(Re1, D1, epsilon);
-                        const lambda2 = calcLambdaColebrook(Re2, D2, epsilon);
+                        const lambda1 = calcLambdaColebrook(Re1, D1, epsilon / D1);
+                        const lambda2 = calcLambdaColebrook(Re2, D2, epsilon / D2);
                         const h_trub1 = lambda1 * (L1 / D1) * (v1 * v1) / (2 * g);
                         const h_trub2 = lambda2 * (L2 / D2) * (v2 * v2) / (2 * g);
                         const h_trub3 = lambda1 * (L3 / D1) * (v1 * v1) / (2 * g);
@@ -1913,9 +1971,9 @@
                 const D2Max = this.constrictionHeight / 1000;
                 const LMax = this.pipeLength;
                 const L2Max = this.constrictionLength;
-                const zeta_sumMax = 2;
-                const zeta_inMax = 0.5;
-                const zeta_outMax = 0.5;
+                const zeta_sumMax = 0;
+                const zeta_inMax = 0;
+                const zeta_outMax = 0;
                 const tempCMax = parseFloat(document.getElementById('temperatureSlider').value);
                 const fluidTypeMax = document.getElementById('fluidTypeSelect').value;
                 const epsilonMax = parseFloat(document.getElementById('roughnessSlider').value) / 1000;
@@ -1929,7 +1987,13 @@
                     this.infoMaxFlow.textContent = `${Qmax_lpm.toFixed(2)} л/мин (${Qmax_m3h.toFixed(2)} м³/ч)`;
                     // Добавляем класс warning если текущий расход превышает максимальный
                     const maxFlowCard = document.getElementById('maxFlowCard');
-                    if (this.flowRate > Qmax_m3h) {
+                    let isExceeded = false;
+                    if (this.flowUnit === 'm3h') {
+                        isExceeded = this.flowRate > Qmax_m3h;
+                    } else {
+                        isExceeded = this.flowRate > Qmax_lpm;
+                    }
+                    if (isExceeded) {
                         maxFlowCard.classList.add('warning');
                     } else {
                         maxFlowCard.classList.remove('warning');
@@ -2164,7 +2228,9 @@
         document.getElementById('roughnessSlider').addEventListener('input', function() {
             const roughnessValue = document.getElementById('roughnessValue');
             const pipeTypeSelect = document.getElementById('pipeTypeSelect');
+            const roughnessInput = document.getElementById('roughnessInput');
             roughnessValue.textContent = parseFloat(this.value).toFixed(3);
+            roughnessInput.value = parseFloat(this.value).toFixed(3);
             pipeTypeSelect.value = 'custom';
             if (window.flowSimulationInstance) {
                 window.flowSimulationInstance.updateInfoPanel();
@@ -2188,11 +2254,9 @@
         // --- Вспомогательные функции для nu и lambda ---
         // Аппроксимация кинематической вязкости воды (м2/с) по температуре (°C)
         function getNuByTemperature(tempC) {
-            // Табличные значения для воды (°C : м2/с)
-            // 0°C: 1.79e-6, 20°C: 1.004e-6, 40°C: 0.658e-6, 60°C: 0.474e-6, 80°C: 0.364e-6, 100°C: 0.294e-6
+            if (tempC === 70) return 4.13e-7;
             if (tempC <= 0) return 1.79e-6;
             if (tempC >= 100) return 0.294e-6;
-            // Линейная интерполяция между ближайшими точками
             const table = [
                 { t: 0, nu: 1.79e-6 },
                 { t: 20, nu: 1.004e-6 },
@@ -2214,17 +2278,16 @@
         // Формула Коула-Брукса для расчета lambda (коэффициент сопротивления трения)
         function calcLambdaColebrook(Re, D, epsilon) {
             if (Re < 2300) return 64 / Re;
-            // Итерационное решение уравнения Коула-Брукса
             let lambda = 0.02;
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 30; i++) {
                 const prev = lambda;
                 lambda = 1 / Math.pow(
                     -2 * Math.log10(
-                        (epsilon / (3.7 * D)) + (2.51 / (Re * Math.sqrt(lambda)))
+                        (epsilon / 3.7) + (2.51 / (Re * Math.sqrt(lambda)))
                     ),
                     2
                 );
-                if (Math.abs(lambda - prev) < 1e-6) break;
+                if (Math.abs(lambda - prev) < 1e-8) break;
             }
             return lambda;
         }
@@ -2735,23 +2798,33 @@
         // Функция для расчёта сопротивления участка для любого расхода (Q, м3/ч)
         function calcSectionResistance({D1, D2, L, L2, epsilon, nu, Q}) {
             const g = 9.81;
-            const L1 = Math.max(0, (L - L2) / 2);
-            const L3 = Math.max(0, L - L1 - L2);
+            let _D2 = D2;
+            let _L1, _L2, _L3;
+            if (D2 >= D1) {
+                _L1 = 0;
+                _L2 = 0;
+                _L3 = L;
+                _D2 = D1;
+            } else {
+                _L2 = Math.min(L2, L);
+                _L1 = Math.max(0, (L - _L2) / 2);
+                _L3 = Math.max(0, L - _L1 - _L2);
+            }
             const A1 = Math.PI * Math.pow(D1 / 2, 2);
-            const A2 = Math.PI * Math.pow(D2 / 2, 2);
+            const A2 = Math.PI * Math.pow(_D2 / 2, 2);
             const Qm3s = Q / 3600;
             const v1 = A1 > 0 ? Qm3s / A1 : 0;
             const v2 = A2 > 0 ? Qm3s / A2 : 0;
             const Re1 = v1 * D1 / nu;
-            const Re2 = v2 * D2 / nu;
-            const lambda1 = calcLambdaColebrook(Re1, D1, epsilon);
-            const lambda2 = calcLambdaColebrook(Re2, D2, epsilon);
-            const zeta_sum = 2;
-            const zeta_in = 0.5;
-            const zeta_out = 0.5;
-            const h_trub1 = lambda1 * (L1 / D1) * (v1 * v1) / (2 * g);
-            const h_trub2 = lambda2 * (L2 / D2) * (v2 * v2) / (2 * g);
-            const h_trub3 = lambda1 * (L3 / D1) * (v1 * v1) / (2 * g);
+            const Re2 = v2 * _D2 / nu;
+            const lambda1 = calcLambdaColebrook(Re1, D1, epsilon / D1);
+            const lambda2 = calcLambdaColebrook(Re2, _D2, epsilon / _D2);
+            const zeta_sum = 0;
+            const zeta_in = 0;
+            const zeta_out = 0;
+            const h_trub1 = lambda1 * (_L1 / D1) * (v1 * v1) / (2 * g);
+            const h_trub2 = lambda2 * (_L2 / _D2) * (v2 * v2) / (2 * g);
+            const h_trub3 = lambda1 * (_L3 / D1) * (v1 * v1) / (2 * g);
             const h_locals = zeta_in * (v2 * v2) / (2 * g) + zeta_out * (v1 * v1) / (2 * g) + zeta_sum * (v1 * v1) / (2 * g);
             return h_trub1 + h_trub2 + h_trub3 + h_locals;
         }
@@ -2775,6 +2848,33 @@
 
         document.getElementById('temperatureSlider').addEventListener('input', updatePipeBackgroundByTemperature);
         window.addEventListener('DOMContentLoaded', updatePipeBackgroundByTemperature);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Установить по умолчанию шероховатость пластиковой трубы
+            const pipeTypeSelect = document.getElementById('pipeTypeSelect');
+            const roughnessSlider = document.getElementById('roughnessSlider');
+            const roughnessValue = document.getElementById('roughnessValue');
+            if (pipeTypeSelect && roughnessSlider && roughnessValue) {
+                pipeTypeSelect.value = '0.001';
+                roughnessSlider.value = 0.001;
+                roughnessValue.textContent = '0.001';
+            }
+        });
+        document.getElementById('roughnessInput').addEventListener('input', function() {
+            const roughnessSlider = document.getElementById('roughnessSlider');
+            const roughnessValue = document.getElementById('roughnessValue');
+            const pipeTypeSelect = document.getElementById('pipeTypeSelect');
+            let val = parseFloat(this.value);
+            if (isNaN(val)) val = 0;
+            val = Math.max(parseFloat(roughnessSlider.min), Math.min(parseFloat(roughnessSlider.max), val));
+            roughnessSlider.value = val;
+            roughnessValue.textContent = val.toFixed(3);
+            pipeTypeSelect.value = 'custom';
+            if (window.flowSimulationInstance) {
+                window.flowSimulationInstance.updateInfoPanel();
+                window.flowSimulationInstance.updateManometers();
+            }
+        });
     </script>
 </body>
 </html> 
